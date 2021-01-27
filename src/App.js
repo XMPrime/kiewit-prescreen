@@ -40,17 +40,20 @@ function App() {
   const [ageMax, setAgeMax] = useState(100);
   const [sort, setSort] = useState('name');
 
-  // simulated API call
+  // Simulated API call
   useEffect(() => {
+    // Gets the age range
     const ages = employee_data.map(({ age }) => age).sort();
     const min = ages[0];
     const max = ages[ages.length - 1];
+
     setEmployees(sortByObjProperty(employee_data, 'name'));
     setAgeRange({ min, max });
     setAgeMin(min);
     setAgeMax(max);
   }, []);
 
+  // HELPER FUNCTION
   const sortByObjProperty = (arr, property) => {
     return arr.sort((a, b) => (a[property] > b[property] ? 1 : -1));
   };
@@ -86,6 +89,7 @@ function App() {
     setName(e.target.value.toLowerCase());
   };
 
+  // Combines all filters together
   const filteredEmployees = employees
     ? sortByObjProperty(
         nameFilter(ageFilter(departmentFilter(employees))),
