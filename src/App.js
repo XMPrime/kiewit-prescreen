@@ -55,6 +55,7 @@ function App() {
     return arr.sort((a, b) => (a[property] > b[property] ? 1 : -1));
   };
 
+  // FILTER FUNCTIONS
   const nameFilter = (employees) => {
     return employees.filter((employee) => {
       return employee.name.toLowerCase().includes(name);
@@ -74,6 +75,7 @@ function App() {
     return employees.filter((employee) => employee.department === department);
   };
 
+  // EVENT HANDLERS
   const handleDepartment = (e) => {
     setSort('department');
     setDepartment(e.target.value);
@@ -116,12 +118,6 @@ function App() {
           </select>
         </div>
         {employees && <EmployeeTable employees={filteredEmployees} />}
-        {/* <div className='employees'>
-          {employees &&
-            filteredEmployees.map((employee) => {
-              return <EmployeeCard employee={employee} />;
-            })}
-        </div> */}
       </div>
     </div>
   );
