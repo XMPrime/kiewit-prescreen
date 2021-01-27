@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import './App.css';
 import employee_data from './data/employee_data';
-import MultiRangeSlider from './components/MultiRangeSlider';
+import MultiRangeSlider from './components/MultiRangeSlider/MultiRangeSlider';
+import EmployeeTable from './components/EmployeeTable/EmployeeTable';
+
+import './index.css';
 
 /*
 
@@ -31,22 +33,27 @@ Feel free to be implement the app in whatever way you feel is best.
 
 function App() {
   const [name, setName] = useState('');
-  const [employees, setEmployees] = useState();
+  const [employees, setEmployees] = useState([]);
   const [department, setDepartment] = useState('All Departments');
   const [ageRange, setAgeRange] = useState({ min: 0, max: 100 });
   const [ageMin, setAgeMin] = useState(0);
   const [ageMax, setAgeMax] = useState(100);
+  const [sort, setSort] = useState('name');
 
   // simulated API call
   useEffect(() => {
     const ages = employee_data.map(({ age }) => age).sort();
     const min = ages[0];
     const max = ages[ages.length - 1];
-    setEmployees(employee_data);
+    setEmployees(sortByObjProperty(employee_data, 'name'));
     setAgeRange({ min, max });
     setAgeMin(min);
     setAgeMax(max);
   }, []);
+
+  const sortByObjProperty = (arr, property) => {
+    return arr.sort((a, b) => (a[property] > b[property] ? 1 : -1));
+  };
 
   const nameFilter = (employees) => {
     return employees.filter((employee) => {
@@ -68,41 +75,53 @@ function App() {
   };
 
   const handleDepartment = (e) => {
+    setSort('department');
     setDepartment(e.target.value);
   };
 
   const handleName = (e) => {
+    setSort('name');
     setName(e.target.value.toLowerCase());
   };
 
   const filteredEmployees = employees
-    ? nameFilter(ageFilter(departmentFilter(employees)))
+    ? sortByObjProperty(
+        nameFilter(ageFilter(departmentFilter(employees))),
+        sort
+      )
     : employees;
 
   return (
     <div className='App'>
-      <h1>Kiewit</h1>
-      <MultiRangeSlider
-        ageRange={ageRange}
-        setAgeMin={setAgeMin}
-        setAgeMax={setAgeMax}
-      />
-      <input type='text' onChange={handleName} />
-      <div>{`${ageMin}, ${ageMax}`}</div>
-      <select onChange={handleDepartment}>
-        <option value={'All Departments'}>All Departments</option>
-        {employees &&
-          [...new Set(employees.map((employee) => employee.department))]
-            .sort()
-            .map((department) => {
-              return <option value={department}>{department}</option>;
+      <h1>Kiewit's Illustrious Employees With Incredible Talent</h1>
+      <div className='container'>
+        <div className='inputs'>
+          <h3>Search by Name</h3>
+          <input type='text' onChange={handleName} />
+          <MultiRangeSlider
+            ageRange={ageRange}
+            setAgeMin={setAgeMin}
+            setAgeMax={setAgeMax}
+            setSort={setSort}
+          />
+          <h3>Search by Department</h3>
+          <select onChange={handleDepartment}>
+            <option value={'All Departments'}>All Departments</option>
+            {employees &&
+              [...new Set(employees.map((employee) => employee.department))]
+                .sort()
+                .map((department) => {
+                  return <option value={department}>{department}</option>;
+                })}
+          </select>
+        </div>
+        {employees && <EmployeeTable employees={filteredEmployees} />}
+        {/* <div className='employees'>
+          {employees &&
+            filteredEmployees.map((employee) => {
+              return <EmployeeCard employee={employee} />;
             })}
-      </select>
-      <div>
-        {employees &&
-          filteredEmployees.map((employee) => {
-            return <p>{employee.name}</p>;
-          })}
+        </div> */}
       </div>
     </div>
   );
