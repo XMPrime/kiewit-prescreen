@@ -80,7 +80,6 @@ function App() {
 
   // EVENT HANDLERS
   const handleDepartment = (e) => {
-    setSort('department');
     setDepartment(e.target.value);
   };
 
